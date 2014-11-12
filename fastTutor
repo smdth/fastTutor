@@ -7,11 +7,41 @@ group_file=`cat $1 | grep -e '^\w' | sed -r 's/(^\w*).*/\1/g'`
 
 for i in $group_file; do
     while true; do
-	echo "Opening $i..."
+	read -p "Open $i? [y/n] " yn
+	case $yn in
+	    [Yy]* ) ;;
+	    * ) break;;
+	esac
+	texstudio $2/$i/$3/sample.tex &
 	emacs $2/$i/$3/* $2/$i/$3/korrektur
 	read -p "Are you done? [y/n] " yn
 	case $yn in
 	    [Yy]* ) break;;
+	    * ) ;;
+	esac
+    done
+done
+
+read -p "Done correcting! Time to fill in the Points? [y/n] " yn
+case $yn in
+    [Yy]* ) ;;
+    * ) exit;;
+esac
+
+emacs $2/../misc/thomas/punkte &
+
+for i in $group_file; do
+    while true; do
+	read -p "Fill in point for $i? [y/n] " yn
+	case $yn in
+	    [Yy]* ) ;;
+	    * ) break;;
+	esac
+	emacs $2/$i/$3/korrektur
+	read -p "Are you done? [y/n] " yn
+	case $yn in
+	    [Yy]* ) svn add $2/$i/$3/korrektur
+		break;;
 	    * ) ;;
 	esac
     done
